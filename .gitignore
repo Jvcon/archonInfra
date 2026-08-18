@@ -30,4 +30,5 @@ yarn-error.log*
 pnpm-debug.log*
 # Claude Code internal
 .claude
-# SQLite database files
+# Wrangler local state (D1 本地数据库、KV 等)
+.wrangler/state/

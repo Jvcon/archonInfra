@@ -1,0 +1,36 @@
+{
+  "name": "ArchonInfra Dev",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
+
+  "forwardPorts": [3100, 8787],
+  "portsAttributes": {
+    "3100": {
+      "label": "Vite Dev Server",
+      "onAutoForward": "notify"
+    },
+    "8787": {
+      "label": "Wrangler Worker",
+      "onAutoForward": "notify"
+    }
+  },
+
+  "postCreateCommand": "pnpm install && pnpm db:migrate && curl -fsSL https://opencode.ai/install | bash",
+
+  "remoteEnv": {
+    "CLOUDFLARE_API_TOKEN": "${localEnv:CLOUDFLARE_API_TOKEN}"
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.vscode-typescript-next",
+        "Cloudflare.cloudflare-workers-vscode-extension"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh"
+      }
+    }
+  }
+}

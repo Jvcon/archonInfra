@@ -8,6 +8,7 @@
     "dev": "vite",
     "dev:worker": "wrangler dev worker/api.ts --local",
     "build": "tsc -b && vite build",
+    "build:pages": "tsc -b && vite build",
     "deploy:pages": "vite build && wrangler pages deploy dist",
     "deploy:worker": "wrangler deploy",
     "typecheck": "tsc --noEmit",

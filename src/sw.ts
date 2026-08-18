@@ -19,12 +19,12 @@ const serwist = new Serwist({
   navigationPreload: true,
   // 导航回退到 index.html（SPA 支持）
   fallbacks: {
-    entries: [{ url: '/index.html', matcher({ request }) { return request.destination === 'document'; } }],
+    entries: [{ url: '/index.html', matcher({ request }: { request: Request }) { return request.destination === 'document'; } }],
   },
   runtimeCaching: [
     {
       // API 请求：网络优先，超时后使用缓存
-      matcher: ({ url }) => url.pathname.startsWith('/api/'),
+      matcher: ({ url }: { url: URL }) => url.pathname.startsWith('/api/'),
       handler: new NetworkFirst({
         cacheName: 'api-cache',
         networkTimeoutSeconds: 5,

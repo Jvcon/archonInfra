@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+@theme {
+  /* 覆盖 Tailwind 调色板映射到 Linear 暗色主题 */
+  --color-slate-50: #141516;
+  --color-slate-100: #18191a;
+  --color-slate-200: #23252a;
+  --color-slate-300: #34343a;
+  --color-slate-400: #62666d;
+  --color-slate-500: #8a8f98;
+  --color-slate-600: #d0d6e0;
+  --color-slate-700: #d0d6e0;
+  --color-slate-800: #f7f8f8;
+  --color-slate-900: #0f1011;
+
+  --color-blue-50: #1a1a2e;
+  --color-blue-100: #1e1e3a;
+  --color-blue-500: #5e6ad2;
+  --color-blue-600: #5e6ad2;
+  --color-blue-700: #828fff;
+
+  --color-green-50: #0d1f12;
+  --color-green-100: #0f2814;
+  --color-green-500: #27a644;
+  --color-green-700: #4ade80;
+
+  --color-red-50: #1f0d0d;
+  --color-red-500: #ef4444;
+  --color-red-700: #f87171;
+
+  --color-purple-50: #1a0d2e;
+  --color-purple-100: #1e103a;
+  --color-purple-700: #a78bfa;
+
+  --color-amber-50: #1f1a0d;
+  --color-amber-100: #28200f;
+  --color-amber-700: #fbbf24;
+
+  --color-cyan-50: #0d1a1f;
+  --color-cyan-100: #0f2028;
+  --color-cyan-700: #22d3ee;
+
+  --color-teal-50: #0d1f1a;
+  --color-teal-600: #2dd4bf;
+
+  --color-indigo-50: #0d0d1f;
+  --color-indigo-200: #23252a;
+  --color-indigo-600: #5e6ad2;
+
+  --color-pink-50: #1f0d1a;
+  --color-pink-600: #ec4899;
+
+  --color-orange-50: #1f150d;
+  --color-orange-600: #f97316;
+
+  --color-violet-100: #1a0d2e;
+  --color-violet-700: #a78bfa;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Linear Design System Colors（CSS 变量供 inline style 使用） */
+  --color-canvas: #010102;
+  --color-surface-1: #0f1011;
+  --color-surface-2: #141516;
+  --color-surface-3: #18191a;
+  --color-surface-4: #191a1b;
+  --color-hairline: #23252a;
+  --color-hairline-strong: #34343a;
+  --color-hairline-tertiary: #3e3e44;
+  --color-primary: #5e6ad2;
+  --color-primary-hover: #828fff;
+  --color-primary-focus: #5e69d1;
+  --color-ink: #f7f8f8;
+  --color-ink-muted: #d0d6e0;
+  --color-ink-subtle: #8a8f98;
+  --color-ink-tertiary: #62666d;
+  --color-success: #27a644;
+}
+
+body {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 全局 border 颜色覆盖 */
+*,
+::before,
+::after {
+  border-color: var(--color-hairline);
+}
+
+/* 全局白色背景元素覆盖为 surface-1 */
+.bg-white {
+  background-color: var(--color-surface-1) !important;
+}
+
+/* 减少全局圆角 */
+.rounded-xl {
+  border-radius: 8px !important;
+}
+.rounded-lg {
+  border-radius: 6px !important;
+}
+.rounded-full {
+  border-radius: 9999px !important;
+}
+
+/* 表单元素暗色主题 */
+input, select, textarea {
+  background-color: var(--color-surface-2) !important;
+  border-color: var(--color-hairline) !important;
+  color: var(--color-ink) !important;
+  border-radius: 6px;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--color-primary) !important;
+  outline: none;
+  box-shadow: 0 0 0 1px var(--color-primary-focus);
+}
+option {
+  background-color: var(--color-surface-2);
+  color: var(--color-ink);
+}
+
+/* 全局滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-surface-1);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-hairline-strong);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-hairline-tertiary);
+}
+
+/* 文本颜色修正 */
+.text-white {
+  color: #ffffff !important;
+}

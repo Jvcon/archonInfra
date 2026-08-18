@@ -1,0 +1,33 @@
+node_modules/
+dist/
+build/
+.next/
+.cache/
+.turbo/
+*.log
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+yarn.lock
+
+# Dependencies
+# Next.js build output
+out/
+# Build artifacts
+# Deploy output
+deploy/
+# Environment files
+.env
+.env.*
+# Misc
+.DS_Store
+.git-backup-*
+.vercel/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+# Claude Code internal
+.claude
+# SQLite database files

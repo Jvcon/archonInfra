@@ -1,36 +1,51 @@
 /** 主应用组件 */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Sidebar } from './components/Sidebar';
 import { Toast } from './components/Toast';
-import { Dashboard } from './pages/Dashboard';
-import { Hardware } from './pages/Hardware';
-import { Networks } from './pages/Networks';
-import { VMs } from './pages/VMs';
-import { Storage } from './pages/Storage';
-import { Apps } from './pages/Apps';
-import { Topology } from './pages/Topology';
-import { Settings } from './pages/Settings';
 import {
   StorageContext, defaultDriver, createDriver, saveStorageConfig,
   type StorageDriver, type StorageConfig,
 } from './lib/storage';
+
+// 页面懒加载——各页面代码仅在首次访问时下载
+const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const Hardware  = lazy(() => import('./pages/Hardware').then(m => ({ default: m.Hardware })));
+const Networks  = lazy(() => import('./pages/Networks').then(m => ({ default: m.Networks })));
+const VMs       = lazy(() => import('./pages/VMs').then(m => ({ default: m.VMs })));
+const Storage   = lazy(() => import('./pages/Storage').then(m => ({ default: m.Storage })));
+const Apps      = lazy(() => import('./pages/Apps').then(m => ({ default: m.Apps })));
+const Topology  = lazy(() => import('./pages/Topology').then(m => ({ default: m.Topology })));
+const Settings  = lazy(() => import('./pages/Settings').then(m => ({ default: m.Settings })));
+
+/** 页面切换时的占位 */
+function PageFallback() {
+  return (
+    <div className="flex items-center justify-center h-64">
+      <div className="animate-spin h-6 w-6 border-4 border-blue-500 border-t-transparent rounded-full" />
+    </div>
+  );
+}
 
 function PageContent() {
   const { state } = useApp();
 
   const pages: Record<string, React.ReactElement> = {
     dashboard: <Dashboard />,
-    hardware: <Hardware />,
-    networks: <Networks />,
-    vms: <VMs />,
-    storage: <Storage />,
-    apps: <Apps />,
-    topology: <Topology />,
-    settings: <Settings />,
+    hardware:  <Hardware />,
+    networks:  <Networks />,
+    vms:       <VMs />,
+    storage:   <Storage />,
+    apps:      <Apps />,
+    topology:  <Topology />,
+    settings:  <Settings />,
   };
 
-  return pages[state.currentPage] ?? <Dashboard />;
+  return (
+    <Suspense fallback={<PageFallback />}>
+      {pages[state.currentPage] ?? <Dashboard />}
+    </Suspense>
+  );
 }
 
 function AppLayout() {

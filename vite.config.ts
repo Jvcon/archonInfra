@@ -70,6 +70,22 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       sourcemap: mode === 'development',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // React 核心 — 几乎不变，长期缓存
+            'vendor-react': ['react', 'react-dom'],
+            // 拓扑可视化 — 最重，单独分包（~1.5MB）
+            'vendor-cytoscape': ['cytoscape', 'cytoscape-dagre'],
+            // 图算法库
+            'vendor-graphology': ['graphology', 'graphology-shortest-path', 'graphology-traversal'],
+            // TanStack 组件库
+            'vendor-tanstack': ['@tanstack/react-form', '@tanstack/react-table'],
+            // 本地存储 + 网络工具
+            'vendor-utils': ['dexie', 'ipaddr.js', 'zod'],
+          },
+        },
+      },
     },
   };
 });

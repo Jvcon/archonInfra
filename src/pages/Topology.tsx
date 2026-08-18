@@ -196,7 +196,7 @@ export function Topology() {
   useEffect(() => { loadTopology(); }, [loadTopology]);
 
   // 构建 Cytoscape 元素：复合节点（设备+端口）+ 包含关系
-  const buildElements = useCallback(() => {
+  const buildElements = useCallback(async () => {
     // 找出哪些网口被边使用（只显示有连接的端口）
     const usedIfaceIds = new Set<string>();
     for (const e of edges) {
@@ -226,7 +226,7 @@ export function Topology() {
       const meta = typeof n.metadata === 'string' ? JSON.parse(n.metadata) : (n.metadata || {});
       const iconName = (meta as Record<string, unknown>)?.icon as string || getDefaultIcon(n.category);
       const color = CATEGORY_COLORS[n.category] || '#475569';
-      const nodeIconUrl = iconToDataUrl(iconName, color);
+      const nodeIconUrl = await iconToDataUrl(iconName, color);
 
       const nodeData: Record<string, unknown> = {
         id: n.id, label: n.name, category: n.category, type: n.type,
@@ -307,11 +307,14 @@ export function Topology() {
 
   // 初始化 Cytoscape
   useEffect(() => {
-    if (!containerRef.current) return;
-    if (cyRef.current) { cyRef.current.destroy(); cyRef.current = null; }
-    if (nodes.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      if (!containerRef.current) return;
+      if (cyRef.current) { cyRef.current.destroy(); cyRef.current = null; }
+      if (nodes.length === 0) return;
 
-    const elements = buildElements();
+      const elements = await buildElements();
+      if (cancelled) return; // 组件已卸载，丢弃结果
 
     const cy = cytoscape({
       container: containerRef.current,
@@ -590,7 +593,8 @@ export function Topology() {
     });
 
     cyRef.current = cy;
-    return () => { cy.destroy(); };
+    })();
+    return () => { cancelled = true; if (cyRef.current) { cyRef.current.destroy(); cyRef.current = null; } };
   }, [nodes, edges, interfaces, buildElements]);
 
   // 加载端口和网口信息
@@ -840,7 +844,7 @@ export function Topology() {
       )}
 
       {/* Cytoscape 容器 */}
-      <div className="h-[600px] bg-white rounded-xl border relative overflow-hidden">
+      <div className="h-150 bg-white rounded-xl border relative overflow-hidden">
         <div ref={containerRef} className="w-full h-full" />
         {nodes.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center text-slate-400">

@@ -1,7 +1,7 @@
 {
   "name": "archoninfra",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "packageManager": "pnpm@9.15.1",
   "scripts": {
@@ -17,6 +17,7 @@
     "db:snapshot:remote": "node scripts/export-snapshot.mjs --remote"
   },
   "dependencies": {
+    "@serwist/window": "^9.5.12",
     "@tanstack/react-form": "^1.33.5",
     "@tanstack/react-table": "^9.1.2",
     "cytoscape": "^3.34.0",
@@ -30,18 +31,16 @@
     "lucide-react": "0.577.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "vite-plugin-pwa": "^1.3.0",
-    "workbox-window": "^7.4.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241218.0",
+    "@cloudflare/workers-types": "^5.20260818.1",
+    "@serwist/vite": "^9.5.12",
     "@tailwindcss/vite": "4.1.18",
     "@types/node": "22.19.7",
     "@types/react": "18.3.27",
     "@types/react-dom": "18.3.7",
     "@vitejs/plugin-react": "4.7.0",
-    "sharp": "^0.35.3",
     "simple-icons": "^16.28.0",
     "tailwindcss": "4.1.18",
     "typescript": "5.9.3",

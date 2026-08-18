@@ -109,6 +109,8 @@ export function Storage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editItem, setEditItem] = useState<Entity | null>(null);
   const [drawerTab, setDrawerTab] = useState<'basic' | 'shares'>('basic');
+  // 表单默认值（驱动 useStorageForm 的 defaultValues，编辑时设为 item 数据）
+  const [formDefaultValues, setFormDefaultValues] = useState<StorageFormValues>(STORAGE_DEFAULT_VALUES);
 
   // 分享表单（独立于主表单，仅用于创建新分享条目）
   const [newShareType, setNewShareType] = useState<ShareType>('NFS');
@@ -156,7 +158,7 @@ export function Storage() {
     }
   }, [editItem, driver, showToast]);
 
-  const form = useStorageForm({ onSubmit: handleFormSubmit });
+  const form = useStorageForm({ defaultValues: formDefaultValues, onSubmit: handleFormSubmit });
 
   const loadData = useCallback(async () => {
     const res = await driver.getEntities({ type: 'storage' }, { page, pageSize: 15 });
@@ -206,7 +208,7 @@ export function Storage() {
   /** 打开创建抽屉 */
   const openCreate = () => {
     setEditItem(null);
-    form.reset(STORAGE_DEFAULT_VALUES);
+    setFormDefaultValues(STORAGE_DEFAULT_VALUES);
     setDrawerTab('basic');
     setDrawerOpen(true);
   };
@@ -215,7 +217,7 @@ export function Storage() {
   const openEdit = (item: Entity) => {
     setEditItem(item);
     const meta = (item.metadata || {}) as StorageMetadataValues;
-    form.reset({
+    setFormDefaultValues({
       name: item.name,
       category: (item.category as StorageCat) || 'nas',
       metadata: {
@@ -370,15 +372,15 @@ export function Storage() {
       {/* 侧滑抽屉 - 创建/编辑存储 */}
       <Drawer
         open={drawerOpen}
-        onClose={() => { form.reset(STORAGE_DEFAULT_VALUES); setDrawerOpen(false); }}
+        onClose={() => { setFormDefaultValues(STORAGE_DEFAULT_VALUES); setDrawerOpen(false); }}
         title={editItem ? `存储详情 - ${editItem.name}` : '添加存储'}
         onBeforeClose={() => !isDirty}
         footer={
           <>
-            <button onClick={() => { form.reset(STORAGE_DEFAULT_VALUES); setDrawerOpen(false); }} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">取消</button>
+            <button onClick={() => { setFormDefaultValues(STORAGE_DEFAULT_VALUES); setDrawerOpen(false); }} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">取消</button>
             <button
               onClick={() => form.handleSubmit()}
-              disabled={!isDirty && !!editItem}
+              disabled={form.state.isSubmitting}
               className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
             >
               保存

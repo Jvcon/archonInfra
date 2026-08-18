@@ -6,15 +6,15 @@ import { useForm } from '@tanstack/react-form';
 import { storageFormSchema, STORAGE_DEFAULT_VALUES, type StorageFormValues } from '../../../lib/schemas/storage';
 
 interface UseStorageFormOpts {
-  /** 编辑模式的初始值，为空则使用默认值（新建模式） */
-  initialValues?: StorageFormValues;
+  /** 当前表单默认值（新建时传 DEFAULT_VALUES，编辑时传 item 的值） */
+  defaultValues?: StorageFormValues;
   /** 提交回调 */
   onSubmit: (values: StorageFormValues) => Promise<void> | void;
 }
 
-export function useStorageForm({ initialValues, onSubmit }: UseStorageFormOpts) {
+export function useStorageForm({ defaultValues, onSubmit }: UseStorageFormOpts) {
   return useForm({
-    defaultValues: initialValues ?? STORAGE_DEFAULT_VALUES,
+    defaultValues: defaultValues ?? STORAGE_DEFAULT_VALUES,
     validators: {
       onChange: storageFormSchema,
     },

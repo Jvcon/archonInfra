@@ -6,15 +6,15 @@ import { useForm } from '@tanstack/react-form';
 import { vmFormSchema, VM_DEFAULT_VALUES, type VMFormValues } from '../../../lib/schemas/vm';
 
 interface UseVMFormOpts {
-  /** 编辑模式的初始值，为空则使用默认值（新建模式） */
-  initialValues?: VMFormValues;
+  /** 当前表单默认值（新建时传 DEFAULT_VALUES，编辑时传 item 的值） */
+  defaultValues?: VMFormValues;
   /** 提交回调 */
   onSubmit: (values: VMFormValues) => Promise<void> | void;
 }
 
-export function useVMForm({ initialValues, onSubmit }: UseVMFormOpts) {
+export function useVMForm({ defaultValues, onSubmit }: UseVMFormOpts) {
   return useForm({
-    defaultValues: initialValues ?? VM_DEFAULT_VALUES,
+    defaultValues: defaultValues ?? VM_DEFAULT_VALUES,
     validators: {
       onChange: vmFormSchema,
     },

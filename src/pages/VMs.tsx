@@ -31,6 +31,8 @@ export function VMs() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editItem, setEditItem] = useState<Entity | null>(null);
   const [drawerTab, setDrawerTab] = useState<'basic' | 'ips'>('basic');
+  // 表单默认值（驱动 useVMForm 的 defaultValues，编辑时设为 item 数据）
+  const [formDefaultValues, setFormDefaultValues] = useState<VMFormValues>(VM_DEFAULT_VALUES);
 
   // 硬件设备列表
   const [hardwareList, setHardwareList] = useState<{ id: string; name: string }[]>([]);
@@ -109,7 +111,7 @@ export function VMs() {
     }
   }, [editItem, driver, showToast, loadData]);
 
-  const form = useVMForm({ onSubmit: handleFormSubmit });
+  const form = useVMForm({ defaultValues: formDefaultValues, onSubmit: handleFormSubmit });
 
   useEffect(() => { loadData(); }, [loadData]);
   useEffect(() => { loadHardwareList(); }, [loadHardwareList]);
@@ -166,7 +168,7 @@ export function VMs() {
 
   const openCreate = () => {
     setEditItem(null);
-    form.reset({
+    setFormDefaultValues({
       ...VM_DEFAULT_VALUES,
       metadata: { vm_type: filterType === 'all' ? 'kvm' : filterType },
     });
@@ -178,7 +180,7 @@ export function VMs() {
   const openEdit = (item: Entity) => {
     setEditItem(item);
     const meta = (item.metadata || {}) as VMMetadataValues;
-    form.reset({
+    setFormDefaultValues({
       name: item.name,
       metadata: meta,
     });
@@ -191,7 +193,7 @@ export function VMs() {
   const openIPTab = (item: Entity) => {
     setEditItem(item);
     const meta = (item.metadata || {}) as VMMetadataValues;
-    form.reset({
+    setFormDefaultValues({
       name: item.name,
       metadata: meta,
     });
@@ -432,9 +434,9 @@ export function VMs() {
       <Pagination page={page} pageSize={15} total={total} onChange={setPage} />
 
       {/* 抽屉 */}
-      <Drawer open={drawerOpen} onClose={() => { form.reset(VM_DEFAULT_VALUES); setDrawerOpen(false); }} title={editItem ? `编辑 - ${editItem.name}` : `新建${form.getFieldValue('metadata.vm_type') === 'lxc' ? ' LXC 容器' : '虚拟机'}`}
+      <Drawer open={drawerOpen} onClose={() => { setFormDefaultValues(VM_DEFAULT_VALUES); setDrawerOpen(false); }} title={editItem ? `编辑 - ${editItem.name}` : `新建${form.getFieldValue('metadata.vm_type') === 'lxc' ? ' LXC 容器' : '虚拟机'}`}
         onBeforeClose={isDirty ? () => confirm('有未保存的更改，确定关闭？') : undefined}
-        footer={<div className="flex gap-2 justify-end"><button onClick={() => { form.reset(VM_DEFAULT_VALUES); setDrawerOpen(false); }} className="px-4 py-2 text-sm border rounded-lg hover:bg-slate-50">取消</button><button onClick={() => form.handleSubmit()} disabled={!isDirty && !!editItem} className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-lg disabled:opacity-50">保存</button></div>}
+        footer={<div className="flex gap-2 justify-end"><button onClick={() => { setFormDefaultValues(VM_DEFAULT_VALUES); setDrawerOpen(false); }} className="px-4 py-2 text-sm border rounded-lg hover:bg-slate-50">取消</button><button onClick={() => form.handleSubmit()} disabled={form.state.isSubmitting} className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-lg disabled:opacity-50">保存</button></div>}
       >
         {/* Tab 切换 */}
         <div className="flex border-b mb-4">

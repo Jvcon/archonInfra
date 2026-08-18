@@ -128,6 +128,8 @@ export function Hardware() {
   // 抽屉状态
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editItem, setEditItem] = useState<Entity | null>(null);
+  // 表单默认值（驱动 useHardwareForm 的 defaultValues，编辑时设为 item 数据）
+  const [formDefaultValues, setFormDefaultValues] = useState<HardwareFormValues>(HARDWARE_DEFAULT_VALUES);
 
   // IP 相关
   const [entityIPs, setEntityIPs] = useState<Record<string, Array<{ address: string; status: string; interface_name?: string | null }>>>({});
@@ -228,7 +230,7 @@ export function Hardware() {
     }
   }, [editItem, driver, showToast, loadData]);
 
-  const form = useHardwareForm({ onSubmit: handleFormSubmit });
+  const form = useHardwareForm({ defaultValues: formDefaultValues, onSubmit: handleFormSubmit });
 
   useEffect(() => { loadData(); }, [loadData]);
 
@@ -270,14 +272,14 @@ export function Hardware() {
 
   const openAdd = () => {
     setEditItem(null);
-    form.reset(HARDWARE_DEFAULT_VALUES);
+    setFormDefaultValues(HARDWARE_DEFAULT_VALUES);
     setDrawerOpen(true);
   };
 
   const openEdit = async (item: Entity) => {
     setEditItem(item);
     const meta = (item.metadata || {}) as HardwareMetadataValues;
-    form.reset({
+    setFormDefaultValues({
       name: item.name,
       category: item.category as HardwareCategory,
       metadata: meta,
@@ -682,15 +684,15 @@ export function Hardware() {
       {/* 侧滑抽屉 - 设备详情编辑（Tab 布局） */}
       <Drawer
         open={drawerOpen}
-        onClose={() => { form.reset(HARDWARE_DEFAULT_VALUES); setDrawerOpen(false); }}
+        onClose={() => { setFormDefaultValues(HARDWARE_DEFAULT_VALUES); setDrawerOpen(false); }}
         title={editItem ? `设备详情 - ${editItem.name}` : '添加设备'}
         onBeforeClose={() => !isDirty}
         footer={drawerTab !== 'network' ? (
           <>
-            <button onClick={() => { form.reset(HARDWARE_DEFAULT_VALUES); setDrawerOpen(false); }} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">
+            <button onClick={() => { setFormDefaultValues(HARDWARE_DEFAULT_VALUES); setDrawerOpen(false); }} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">
               取消
             </button>
-            <button onClick={() => form.handleSubmit()} disabled={!isDirty && !!editItem}
+            <button onClick={() => form.handleSubmit()} disabled={form.state.isSubmitting}
               className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed">
               保存
             </button>

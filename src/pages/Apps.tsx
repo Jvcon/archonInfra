@@ -65,6 +65,8 @@ export function Apps() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editItem, setEditItem] = useState<Entity | null>(null);
   const [drawerTab, setDrawerTab] = useState<'basic' | 'addresses'>('basic');
+  // 表单默认值（驱动 useAppForm 的 defaultValues，编辑时设为 item 数据）
+  const [formDefaultValues, setFormDefaultValues] = useState<AppFormValues>(APP_DEFAULT_VALUES);
 
   // 新增地址表单（独立于主表单，仅用于创建新地址条目）
   const [newAddrLabel, setNewAddrLabel] = useState('');
@@ -139,7 +141,7 @@ export function Apps() {
     }
   }, [editItem, driver, showToast, loadData]);
 
-  const form = useAppForm({ onSubmit: handleFormSubmit });
+  const form = useAppForm({ defaultValues: formDefaultValues, onSubmit: handleFormSubmit });
 
   /** 行内编辑回调 */
   const handleInlineUpdate = useCallback(async (entity: Entity, field: string, value: string) => {
@@ -268,7 +270,7 @@ export function Apps() {
   /** 打开创建抽屉 */
   const openCreate = () => {
     setEditItem(null);
-    form.reset(APP_DEFAULT_VALUES);
+    setFormDefaultValues(APP_DEFAULT_VALUES);
     setDrawerTab('basic');
     setDrawerOpen(true);
   };
@@ -277,7 +279,7 @@ export function Apps() {
   const openEdit = (item: Entity) => {
     setEditItem(item);
     const meta = (item.metadata || {}) as AppMetadataValues;
-    form.reset({
+    setFormDefaultValues({
       name: item.name,
       category: (item.category as AppCat) || 'service',
       metadata: meta,
@@ -291,7 +293,7 @@ export function Apps() {
   const openIPTab = (item: Entity) => {
     setEditItem(item);
     const meta = (item.metadata || {}) as AppMetadataValues;
-    form.reset({
+    setFormDefaultValues({
       name: item.name,
       category: (item.category as AppCat) || 'service',
       metadata: meta,
@@ -651,13 +653,13 @@ export function Apps() {
       {/* 侧滑抽屉 */}
       <Drawer
         open={drawerOpen}
-        onClose={() => { form.reset(APP_DEFAULT_VALUES); setDrawerOpen(false); }}
+        onClose={() => { setFormDefaultValues(APP_DEFAULT_VALUES); setDrawerOpen(false); }}
         title={editItem ? '编辑应用' : '添加应用'}
         onBeforeClose={isDirty ? () => confirm('有未保存的更改，确定关闭？') : undefined}
         footer={
           <div className="flex justify-end gap-2">
-            <button onClick={() => { form.reset(APP_DEFAULT_VALUES); setDrawerOpen(false); }} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">取消</button>
-            <button onClick={() => form.handleSubmit()} disabled={!isDirty && !!editItem} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">保存</button>
+            <button onClick={() => { setFormDefaultValues(APP_DEFAULT_VALUES); setDrawerOpen(false); }} className="px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 rounded-lg">取消</button>
+            <button onClick={() => form.handleSubmit()} disabled={form.state.isSubmitting} className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50">保存</button>
           </div>
         }
       >
